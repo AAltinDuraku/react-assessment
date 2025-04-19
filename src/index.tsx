@@ -5,14 +5,57 @@ import App from "./App";
 import reportWebVitals from "./reportWebVitals";
 import { Provider } from "react-redux";
 import { store } from "./redux/store";
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import LoginPage from "./pages/Login/LoginPage";
+import HomePage from "./pages/Home/HomePage";
+import ProtectedRoute from "./components/layouts/ProtectedRoute";
+import ProductsPage from "./pages/Products/ProductsPage";
+import { startTokenValidation, validateToken } from "./utils/authUtils";
 
 const root = ReactDOM.createRoot(
   document.getElementById("root") as HTMLElement
 );
+
+console.log(store.getState().auth.isAuthenticated)
+if (store.getState().auth.isAuthenticated) {
+  validateToken();
+  startTokenValidation();
+}
+
+const router = createBrowserRouter([
+  {
+    path: "/",
+    element: <App />,
+    children: [
+      {
+        path: "login",
+        element: <LoginPage />,
+      },
+      {
+        element: <ProtectedRoute />,
+        children: [
+          {
+            index: true,
+            element: <HomePage />,
+          },
+          {
+            path: "products",
+            element: <ProductsPage />,
+          },
+          // {
+          //   path: 'products/:productId',
+          //   element: <ProductDetailPage />,
+          // },
+        ],
+      },
+    ],
+  },
+]);
+
 root.render(
   <Provider store={store}>
     <React.StrictMode>
-      <App />
+      <RouterProvider router={router} />
     </React.StrictMode>
   </Provider>
 );
