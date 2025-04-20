@@ -1,3 +1,5 @@
+import StyledButton from "./StyledButton";
+
 interface ButtonProps {
   label: string;
   onClick: () => void;
@@ -6,9 +8,9 @@ interface ButtonProps {
 
 const Button = ({ label, onClick, type = "button" }: ButtonProps) => {
   return (
-    <button onClick={onClick} type={type}>
+    <StyledButton onClick={onClick} type={type}>
       {label}
-    </button>
+    </StyledButton>
   );
 };
 

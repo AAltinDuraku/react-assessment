@@ -1,0 +1,44 @@
+.container {
+  width: 100%;
+  max-width: 1600px;
+  margin: auto;
+}
+
+.App-header {
+  background-color: #333;
+  color: white;
+  display: flex;
+  align-items: center;
+  height: 50px;
+}
+
+
+.App-header .container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.App-header ul{
+  display: flex;
+  align-items: center;
+}
+.App-header button{
+  margin-left: 10px;
+}
+
+.navLinks {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.navLinks a {
+  color: white;
+  text-decoration: none;
+  margin-left: 10px;
+}
+
+.navLinks a:hover {
+  text-decoration: underline;
+}
