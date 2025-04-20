@@ -1,7 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import styles from "./ProductCard.module.css";
 import Button from "../Button/Button";
-import axios from "axios";
 
 interface Product {
   id: number;
@@ -17,14 +16,16 @@ interface ProductCardProps {
   product: Product;
   setEditProduct: (product: Product) => void;
   setModalOpen: (open: boolean) => void;
-  onDelete: (productId: number) => void;
+  setShowDeleteModal: (show: boolean) => void;
+  setProductId: (id: number) => void;
 }
 
 const ProductCard = ({
   product,
   setEditProduct,
   setModalOpen,
-  onDelete,
+  setShowDeleteModal,
+  setProductId,
 }: ProductCardProps) => {
   const navigate = useNavigate();
 
@@ -39,35 +40,41 @@ const ProductCard = ({
 
   return (
     <div className={styles.productCard} onClick={handleCardClick}>
-      <h2 className={styles.title}>{product.title}</h2>
-      <p className={styles.category}>
-        <span>Category:</span> {product.category}
-      </p>
-      <p className={styles.description}>{product.description}</p>
-      <p className={styles.rating}>
-        <span>Rating: </span> {product.rating} ⭐
-      </p>
-      <p className={styles.price}>
-        Price: <span className={styles.originalPrice}>${product.price}</span>{" "}
-        <span className={styles.discountedPrice}>${discountedPrice}</span>
-      </p>  
-      <Button
-        type="button"
-        label="Edit"
-        onClick={(e) => {
-          e?.stopPropagation();
-          setEditProduct(product);
-          setModalOpen(true);
-        }}
-      />
-      <Button
-        type="button"
-        label="Delete"
-        onClick={(e) => {
-          e?.stopPropagation();
-          onDelete(product.id);
-        }}
-      />
+      <div>
+        <h2 className={styles.title}>{product.title}</h2>
+        <p className={styles.category}>
+          <span>Category:</span> {product.category}
+        </p>
+        <p className={styles.description}>{product.description}</p>
+        <p className={styles.rating}>
+          <span>Rating: </span> {product.rating} ⭐
+        </p>
+        <p className={styles.price}>
+          Price: <span className={styles.originalPrice}>${product.price}</span>{" "}
+          <span className={styles.discountedPrice}>${discountedPrice}</span>
+        </p>
+      </div>
+
+      <div>
+        <Button
+          type="button"
+          label="Edit"
+          onClick={(e) => {
+            e?.stopPropagation();
+            setEditProduct(product);
+            setModalOpen(true);
+          }}
+        />
+        <Button
+          type="button"
+          label="Delete"
+          onClick={(e) => {
+            e?.stopPropagation();
+            setProductId(product.id);
+            setShowDeleteModal(true);
+          }}
+        />
+      </div>
     </div>
   );
 };

@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
 import ProductCard from "../../components/ui/Products/ProductCard";
 import ProductModal from "../../components/Products/ProductModal";
 import Button from "../../components/ui/Button/Button";
@@ -10,6 +9,7 @@ import { onLoad, onSuccess } from "../../redux/slices/crudStateSlice";
 import Loading from "../../components/ui/Loading/Loading";
 import Pagination from "../../components/ui/Pagination/Pagination";
 import axiosInstance from "../../lib/axios";
+import Modal from "../../components/ui/Modal/Modal";
 
 interface Product {
   id: number;
@@ -31,6 +31,8 @@ const ProductsPage = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [modalOpen, setModalOpen] = useState(false);
   const [editProduct, setEditProduct] = useState<any>(null);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [productId, setProductId] = useState<number | null>(null);
 
   const fetchPosts = async (page: number) => {
     dispatch(onLoad());
@@ -149,8 +151,9 @@ const ProductsPage = () => {
             key={product.id}
             product={product}
             setEditProduct={setEditProduct}
+            setProductId={setProductId}
             setModalOpen={setModalOpen}
-            onDelete={() => handleDelete(product.id)}
+            setShowDeleteModal={setShowDeleteModal}
           />
         ))}
       </div>
@@ -167,6 +170,30 @@ const ProductsPage = () => {
         onSubmit={editProduct ? handleEdit : handleCreate}
         initialData={editProduct}
       />
+      {showDeleteModal && (
+        <Modal
+          title="Are you sure you want to delete this product?"
+          onClose={() => setShowDeleteModal(false)}
+        >
+          <div>
+            <Button
+              type="button"
+              label="Cancel"
+              onClick={() => setShowDeleteModal(false)}
+            />
+            <Button
+              type="button"
+              label="Delete"
+              onClick={() => {
+                if (productId !== null) {
+                  handleDelete(productId);
+                }
+                setShowDeleteModal(false);
+              }}
+            />
+          </div>
+        </Modal>
+      )}
     </div>
   );
 };
