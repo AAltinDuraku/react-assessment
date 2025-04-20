@@ -154,6 +154,7 @@ const ProductsPage = () => {
       dispatch(
         onSuccess({ message: "Deleted Post Successfully", type: "success" })
       );
+      //fetchPosts(currentPage); // Uncomment this line if you want to refetch products after deletion, also it brings back the post that was deleted
       setProducts(products.filter((product) => product.id !== productId));
     } catch (error) {
       dispatch(onSuccess({ message: "Error deleting product", type: "error" }));

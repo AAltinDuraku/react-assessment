@@ -1,8 +1,8 @@
 import { store } from "../redux/store";
 import { logout } from "../redux/slices/AuthState";
 
-const EXPIRATION_TIME = 30 * 60 * 1000;
-const CHECK_INTERVAL = 30 * 60 * 1000;
+const EXPIRATION_TIME = 30 * 60 * 1000; //this is hardcoded for now
+let CHECK_INTERVAL = 30 * 60 * 1000; //this is hardcoded for now
 
 export const validateToken = () => {
   const state = store.getState();
@@ -26,9 +26,9 @@ export const validateToken = () => {
     return;
   } else {
     const timeUntilExpiration = EXPIRATION_TIME - timeDiff;
-    const nextCheckDelay = Math.min(timeUntilExpiration, CHECK_INTERVAL);
+    CHECK_INTERVAL = Math.min(timeUntilExpiration, CHECK_INTERVAL);
 
-    setTimeout(validateToken, nextCheckDelay);
+    setTimeout(validateToken, CHECK_INTERVAL);
   }
 };
 
