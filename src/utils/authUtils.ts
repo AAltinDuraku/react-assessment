@@ -7,7 +7,8 @@ const CHECK_INTERVAL = 30 * 60 * 1000;
 export const validateToken = () => {
   const state = store.getState();
   const { isAuthenticated, timeLoggedIn } = state.auth;
-
+  console.log("isAuthenticated", isAuthenticated);
+  console.log("timeLoggedIn", timeLoggedIn);
   if (isAuthenticated || timeLoggedIn) {
     if (!isAuthenticated || !timeLoggedIn) {
       store.dispatch(logout());

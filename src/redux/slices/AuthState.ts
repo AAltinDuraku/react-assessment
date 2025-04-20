@@ -42,7 +42,7 @@ const authSlice = createSlice({
       state.token = action.payload.token;
       state.user = action.payload.user;
       state.isAuthenticated = true;
-      state.timeLoggedIn = null;
+      state.timeLoggedIn = action.payload.timeLoggedIn;
       state.loading = false;
     },
     loginFailure(state, action: PayloadAction<string>) {

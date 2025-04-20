@@ -11,12 +11,13 @@ import HomePage from "./pages/Home/HomePage";
 import ProtectedRoute from "./components/layouts/ProtectedRoute";
 import ProductsPage from "./pages/Products/ProductsPage";
 import { startTokenValidation, validateToken } from "./utils/authUtils";
+import ProductDetailPage from "./pages/Products/Product/ProductDetailPage";
 
 const root = ReactDOM.createRoot(
   document.getElementById("root") as HTMLElement
 );
 
-console.log(store.getState().auth.isAuthenticated)
+console.log(store.getState().auth.isAuthenticated);
 if (store.getState().auth.isAuthenticated) {
   validateToken();
   startTokenValidation();
@@ -42,10 +43,10 @@ const router = createBrowserRouter([
             path: "products",
             element: <ProductsPage />,
           },
-          // {
-          //   path: 'products/:productId',
-          //   element: <ProductDetailPage />,
-          // },
+          {
+            path: "products/:productId",
+            element: <ProductDetailPage />,
+          },
         ],
       },
     ],

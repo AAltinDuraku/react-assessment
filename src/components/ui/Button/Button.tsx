@@ -2,7 +2,7 @@ import StyledButton from "./StyledButton";
 
 interface ButtonProps {
   label: string;
-  onClick: () => void;
+  onClick: (event?: React.MouseEvent<HTMLButtonElement>) => void;
   type?: "button" | "submit" | "reset";
 }
 
