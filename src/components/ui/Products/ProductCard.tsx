@@ -69,7 +69,7 @@ const ProductCard = ({
           }}
         />
         <Button
-          type="button"
+          isDelete={true}
           label="Delete"
           onClick={(e) => {
             e?.stopPropagation();

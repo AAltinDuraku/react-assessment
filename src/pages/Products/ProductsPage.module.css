@@ -23,7 +23,7 @@
 .productsWrapper {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.5%;
+  gap: 1.25%;
 }
 
 .modalButtons {

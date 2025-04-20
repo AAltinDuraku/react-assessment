@@ -260,7 +260,7 @@ const ProductsPage = () => {
               onClick={() => setShowDeleteModal(false)}
             />
             <Button
-              type="button"
+              isDelete={true}
               label="Delete"
               onClick={() => {
                 if (productId !== null) {
