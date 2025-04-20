@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import axios from "axios";
 import styles from "./ProductDetailPage.module.css";
 import axiosInstance from "../../../lib/axios";
 
@@ -15,11 +14,9 @@ interface Product {
 
 const ProductDetailPage = () => {
   const { productId } = useParams<{ productId: string }>();
-  const navigate = useNavigate();
   const [product, setProduct] = useState<Product | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-
 
   useEffect(() => {
     const fetchProduct = async () => {
@@ -32,7 +29,7 @@ const ProductDetailPage = () => {
         setLoading(false);
       }
     };
-  
+
     fetchProduct();
   }, [productId]);
 

@@ -1,7 +1,7 @@
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import Button from "../ui/Button/Button";
-import styles from "./LoginForm.module.css"; // Import CSS Module
+import styles from "./LoginForm.module.css";
 import { validationSchema } from "./helpers/validation";
 
 type LoginFormValues = {
