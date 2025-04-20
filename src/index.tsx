@@ -17,7 +17,6 @@ const root = ReactDOM.createRoot(
   document.getElementById("root") as HTMLElement
 );
 
-console.log(store.getState().auth.isAuthenticated);
 if (store.getState().auth.isAuthenticated) {
   validateToken();
   startTokenValidation();

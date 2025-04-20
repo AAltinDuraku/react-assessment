@@ -3,13 +3,16 @@ import ProductCard from "../../components/ui/Products/ProductCard";
 import ProductModal from "../../components/Products/ProductModal";
 import Button from "../../components/ui/Button/Button";
 import { useSelector } from "react-redux";
-import { RootState } from "../../redux/store";
+import type { RootState } from "../../redux/store";
 import { useDispatch } from "react-redux";
 import { onLoad, onSuccess } from "../../redux/slices/crudStateSlice";
 import Loading from "../../components/ui/Loading/Loading";
 import Pagination from "../../components/ui/Pagination/Pagination";
 import axiosInstance from "../../lib/axios";
 import Modal from "../../components/ui/Modal/Modal";
+import Dropdown from "../../components/ui/DropDown/DropDown";
+
+import styles from "./ProductsPage.module.css"; // 👈 import the CSS module
 
 interface Product {
   id: number;
@@ -20,6 +23,23 @@ interface Product {
   rating: number;
   category: string;
 }
+
+interface ProductFormData {
+  title: string;
+  description: string;
+  price: number;
+  category?: string;
+  image?: string;
+  id?: number;
+  images?: string[];
+}
+
+type Category = {
+  slug: string;
+  name: string;
+  url: string;
+};
+
 const pageSize = 10;
 
 const ProductsPage = () => {
@@ -30,22 +50,40 @@ const ProductsPage = () => {
   const [totalItems, setTotalItems] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
   const [modalOpen, setModalOpen] = useState(false);
-  const [editProduct, setEditProduct] = useState<any>(null);
+  const [editProduct, setEditProduct] = useState<Product | null>(null);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [productId, setProductId] = useState<number | null>(null);
+  const [sortOrder, setSortOrder] = useState<string>("");
+  const [categoryFilter, setCategoryFilter] = useState<string>("");
+  const [categories, setCategories] = useState<Category[]>([]);
 
   const fetchPosts = async (page: number) => {
     dispatch(onLoad());
 
     try {
-      const res = await axiosInstance.get(
-        `/products?limit=${pageSize}&skip=${(page - 1) * pageSize}`
-      );
-      dispatch(
-        onSuccess({ message: "Fetched Posts Successfully", type: "success" })
-      );
+      const skip = (page - 1) * pageSize;
+      const params = new URLSearchParams({
+        limit: pageSize.toString(),
+        skip: skip.toString(),
+      });
+
+      if (sortOrder) {
+        params.append("sortBy", "price");
+        params.append("order", sortOrder);
+      }
+
+      const endpoint = categoryFilter
+        ? `/products/category/${categoryFilter}`
+        : "/products";
+
+      const res = await axiosInstance.get(`${endpoint}?${params.toString()}`);
+
       setProducts(res.data.products);
       setTotalItems(res.data.total);
+
+      dispatch(
+        onSuccess({ message: "Fetched Products Successfully", type: "success" })
+      );
     } catch (error) {
       dispatch(
         onSuccess({ message: "Error fetching products", type: "error" })
@@ -54,10 +92,15 @@ const ProductsPage = () => {
     }
   };
 
-  const handleCreate = async (product: any) => {
+  const handleCreate = async (product: ProductFormData) => {
     dispatch(onLoad());
 
     try {
+      const { image, ...rest } = product;
+      const body = {
+        ...rest,
+        images: rest.images ? [...rest.images, image] : image ? [image] : [],
+      };
       const response = await axiosInstance.post("/products/add", product);
       setProducts([response.data, ...products]);
       dispatch(
@@ -77,17 +120,21 @@ const ProductsPage = () => {
     setModalOpen(false);
   };
 
-  const handleEdit = async (product: any) => {
+  const handleEdit = async (product: ProductFormData) => {
     dispatch(onLoad());
 
     try {
-      const response = await axiosInstance.patch(
-        `/products/${product.id}`,
-        product
-      );
-      setProducts(
-        products.map((p) => (p.id === product.id ? response.data : p))
-      );
+      if (!product.id) {
+        throw new Error("Product ID is required for editing");
+      }
+
+      const { id, image, ...rest } = product;
+      const body = {
+        ...rest,
+        images: rest.images ? [...rest.images, image] : image ? [image] : [],
+      };
+      const response = await axiosInstance.patch(`/products/${id}`, body);
+      setProducts(products.map((p) => (p.id === id ? response.data : p)));
       dispatch(
         onSuccess({ message: "Edited Post Successfully", type: "success" })
       );
@@ -116,7 +163,20 @@ const ProductsPage = () => {
 
   useEffect(() => {
     fetchPosts(currentPage);
-  }, [currentPage]);
+  }, [currentPage, sortOrder, categoryFilter]);
+
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const res = await axiosInstance.get("/products/categories");
+        setCategories(res.data);
+      } catch (error) {
+        console.error("Error fetching categories:", error);
+      }
+    };
+
+    fetchCategories();
+  }, []);
 
   const totalPages = Math.ceil(totalItems / pageSize);
 
@@ -126,10 +186,28 @@ const ProductsPage = () => {
 
   return (
     <div>
-      <h2 style={{ fontSize: "36px", textAlign: "center", margin: "40px 0" }}>
-        Products
-      </h2>
-      <div>
+      <h2 className={styles.pageTitle}>Products</h2>
+      <div className={styles.controlsContainers}>
+        <div className={styles.controlsWrapper}>
+          <Dropdown
+            label="Category"
+            options={categories.map((cat) => ({
+              label: cat.name,
+              value: cat.slug,
+            }))}
+            value={categoryFilter}
+            onChange={(value) => setCategoryFilter(value)}
+          />
+          <Dropdown
+            label="Sort by Price"
+            options={[
+              { label: "Low to High", value: "asc" },
+              { label: "High to Low", value: "desc" },
+            ]}
+            value={sortOrder}
+            onChange={(value) => setSortOrder(value)}
+          />
+        </div>
         <Button
           type="button"
           onClick={() => {
@@ -139,13 +217,7 @@ const ProductsPage = () => {
           label="Add Product"
         />
       </div>
-      <div
-        style={{
-          display: "flex",
-          flexWrap: "wrap",
-          gap: "0.5%",
-        }}
-      >
+      <div className={styles.productsWrapper}>
         {products.map((product) => (
           <ProductCard
             key={product.id}
@@ -167,7 +239,13 @@ const ProductsPage = () => {
       <ProductModal
         isOpen={modalOpen}
         onClose={() => setModalOpen(false)}
-        onSubmit={editProduct ? handleEdit : handleCreate}
+        onSubmit={(product) => {
+          if (editProduct) {
+            handleEdit(product);
+          } else {
+            handleCreate(product);
+          }
+        }}
         initialData={editProduct}
       />
       {showDeleteModal && (
@@ -175,7 +253,7 @@ const ProductsPage = () => {
           title="Are you sure you want to delete this product?"
           onClose={() => setShowDeleteModal(false)}
         >
-          <div>
+          <div className={styles.modalButtons}>
             <Button
               type="button"
               label="Cancel"

@@ -1,0 +1,32 @@
+.pageTitle {
+  font-size: 36px;
+  text-align: center;
+  margin: 40px 0;
+}
+
+.controlsContainers {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+}
+.controlsContainers button {
+  float: right;
+  margin-left: 15px;
+  height: fit-content;
+}
+.controlsWrapper {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.productsWrapper {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5%;
+}
+
+.modalButtons {
+  display: flex;
+  gap: 1rem;
+}

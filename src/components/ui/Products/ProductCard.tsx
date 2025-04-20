@@ -31,7 +31,7 @@ const ProductCard = ({
 
   const discountedPrice = (
     product.price -
-    (product.price * product.discountPercentage) / 100
+    (product.price * (product.discountPercentage ?? 1)) / 100
   ).toFixed(2);
 
   const handleCardClick = () => {
@@ -50,7 +50,10 @@ const ProductCard = ({
           <span>Rating: </span> {product.rating} ⭐
         </p>
         <p className={styles.price}>
-          Price: <span className={styles.originalPrice}>${product.price}</span>{" "}
+          Price:{" "}
+          {product?.discountPercentage && (
+            <span className={styles.originalPrice}>${product.price}</span>
+          )}
           <span className={styles.discountedPrice}>${discountedPrice}</span>
         </p>
       </div>

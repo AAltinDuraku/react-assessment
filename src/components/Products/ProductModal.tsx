@@ -1,23 +1,35 @@
-import React, { useEffect } from "react";
+import { useEffect } from "react";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import Modal from "../ui/Modal/Modal";
 import styles from "./ProductModal.module.css";
 import Button from "../ui/Button/Button";
 
-interface Product {
-  id?: number;
+interface ProductFormData {
   title: string;
   description: string;
   price: number;
   category?: string;
   image?: string;
+  id?: number;
+  images?: string[];
+}
+
+interface Product {
+  id: number;
+  title: string;
+  description: string;
+  price: number;
+  category?: string;
+  image?: string;
+  discountPercentage?: number;
+  rating?: number;
 }
 
 interface ProductModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSubmit: (product: Product) => void;
+  onSubmit: (product: ProductFormData) => void;
   initialData?: Product | null;
 }
 
@@ -59,10 +71,11 @@ const ProductModal = ({
           price: initialData?.price || 0,
           category: initialData?.category || "",
           image: initialData?.image || "",
+          ...(initialData?.id ? { id: initialData.id } : {}),
         }}
         validationSchema={productSchema}
         onSubmit={(values) => {
-          onSubmit({ ...initialData, ...values });
+          onSubmit(values);
           onClose();
         }}
       >
